@@ -21,7 +21,7 @@
       return {
         templateUrl: '/templates/directives/seek_bar.html',
         replace: true,
-        restrict: 'E',
+        restrict: 'EA', //added 'A' for thumb
         scope: { },
         link: function(scope, element, attributes) {
           scope.value = 0;
@@ -44,6 +44,9 @@
               scope.value = percent * scope.max;
             };
 
+            scope.thumbStyle = function() {
+              return {left: percentString()};
+            }
 /**
 * @function trackThumb - Public
 * @desc Similar to scope.onClickSeekBar, but uses $apply to constantly
