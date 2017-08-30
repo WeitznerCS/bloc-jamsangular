@@ -1,7 +1,12 @@
 (function() {
+  /**
+ * SongPlayer service manages playing, pausing a song, and tracks its state
+ * @constructor
+ */
+
     function SongPlayer($rootScope, Fixtures) {
          var SongPlayer = {};
-
+         var currentSong = null;
          var currentAlbum = Fixtures.getAlbum();
 
              /**
@@ -32,16 +37,8 @@
 */
          var currentBuzzObject = null;
 
+         SongPlayer.volume = null;
 
-/**
-* @function playSong (private)
-* @desc plays current Buzz object, sets playing property to true
-* @param  {Object} song [one song in album object array]
-*/
-    var playSong = function(song) {
-      currentBuzzObject.play();
-      song.playing = true;
-    };
 
  /**
 * @function setSong
@@ -52,7 +49,7 @@
          var setSong = function(song) {
             if (currentBuzzObject) {
                 currentBuzzObject.stop();
-                currentSong.playing = null;
+                SongPlayer.currentSong.playing = null;
               }
 
               currentBuzzObject = new buzz.sound(song.audioUrl, {
@@ -68,15 +65,21 @@
           SongPlayer.currentSong = song;
         };
 
+/**
+* @function play() - Public
+* @desc Plays selected song, and set its playing state which
+ * impacts how it's displayed to the user
+* @param  {Object} song - one song in array of album object
+*/
          SongPlayer.play = function(song) {
            song = song || SongPlayer.currentSong;
            if (currentSong !== song) {
              setSong(song);
              playSong(song);
 
-           } else if (currentSong === song) {
+           } else if (SongPlayer.currentSong === song) {
                 if (currentBuzzObject.isPaused()) {
-                    currentBuzzObject.play();
+                    playSong(song);
                     //song.playing = true;
                 }
             }
@@ -120,7 +123,7 @@
           if (currentSongIndex >= currentAlbum.songs.length) {
             stopSong();
           } else {
-            var song = currentAlbum.songs[currentSongIndex];
+            song = currentAlbum.songs[currentSongIndex];
             setSong(song);
             playSong(song);
           }
@@ -136,6 +139,31 @@
                 currentBuzzObject.setTime(time);
             }
         };
+/**
+* @function playSong (private)
+* @desc plays current Buzz object, sets playing property to true
+* @param  {Object} song [one song in album object array]
+*/
+            var playSong = function(song) {
+              setSong(song);
+              currentBuzzObject.play();
+              song.playing = true;
+            };
+
+/**
+* @function setVolume() - Public
+* @desc Set volume according to seek bar changes
+* @param {Number} volume level from (0-100)
+*/
+
+      SongPlayer.setVolume = function(vol) {
+
+          if (currentBuzzObject) {
+              SongPlayer.volume = vol;
+              currentBuzzObject.setVolume(vol);
+          }
+      };
+
 /**
  * @function stopSong() - Private
  * @desc Stops active song from playing, and resets playing status
