@@ -82,19 +82,50 @@
 * @desc Starts playing song located previous to currently active song
 * @param {Object} song [one song in album object array]
 */
-          SongPlayer.previous = function() {
+          SongPlayer.previous = function(song) {
               var currentSongIndex = getSongIndex(SongPlayer.currentSong);
               currentSongIndex--;
 
               if (currentSongIndex < 0) {
-                  currentBuzzObject.stop();
-                  SongPlayer.currentSong.playing = null;
+                  stopSong();
                 } else {
                   var song = currentAlbum.songs[currentSongIndex];
                     setSong(song);
                     playSong(song);
                 }
             };
+
+
+/**
+* @function next() - Public
+* @desc Starts playing song located after currently active song
+* @param {Object} song [one song in album object array]
+*/
+
+        SongPlayer.next = function(song) {
+          var currentSongIndex = getSongIndex(SongPlayer.currentSong);
+          currentSongIndex++;
+
+          if (currentSongIndex >= currentAlbum.songs.length) {
+            stopSong();
+          } else {
+            var song = currentAlbum.songs[currentSongIndex];
+            setSong(song);
+            playSong(song);
+          }
+        };
+
+/**
+ * @function stopSong() - Private
+ * @desc Stops active song from playing, and resets playing status
+ * to null so nothing plays
+ * @param {Object} song [one song in album object array]
+ */
+      var stopSong = function(song) {
+          currentBuzzObject.stop()
+          SongPlayer.currentSong.playing = null;
+        };
+
          return SongPlayer;
     }
 
