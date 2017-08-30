@@ -38,6 +38,16 @@
         return Fixtures;
     }
 
+    var getCollection = function(numberOfAlbums) {
+        var collection = [];
+
+        for (var x=0; x<numberOfAlbums; x++) {
+            collection.push(getAlbum());
+          }
+
+          return collection;
+};
+
     angular
         .module('blocJams')
         .factory('Fixtures', Fixtures);
